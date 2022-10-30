@@ -1,46 +1,58 @@
-import React, { useState } from 'react';
-
+import React from 'react';
+import './App.css';
 import InputField from './Components/InputField';
 
-import './App.css';
-
 function App() {
-
-  const inputRef = React.useRef([
+  const inputRefs = React.useRef([
     React.createRef(), React.createRef()
   ]);
 
-  const [data, setData] = useState({});
+  const [data, setData] = React.useState({});
 
   const handleChange = (name, value) => {
     setData(prev => ({ ...prev, [name]: value }))
   }
 
   const submitForm = (e) => {
-    e.preventDefault()
+    e.preventDefault();
+
     let isValid = true;
-    for(let i =0; i < inputRef.current.length; i++) {
-      const valid = inputRef.current[i].current.validate()
+
+    for (let i = 0; i < inputRefs.current.length; i++) {
+      const valid = inputRefs.current[i].current.validate()
+      console.log(valid)
+      if (!valid) {
+        isValid = false
+      }
     }
+
+    if (!isValid) {
+      return
+    }
+
+    console.log("Logged In");
+    //Carry on as normal
   }
 
   return (
-    <div className="input-wrapper">
-      <form onSubmit={submitForm}>
+    <div className="App">
+      <form onSubmit={submitForm} className="form">
+        <h1>React Register Form</h1>
         <InputField
-          ref={inputRef.current[0]}
-          name='username'
-          label='Username:'
+          ref={inputRefs.current[0]}
+          name="username"
+          label="Username*:"
+          onChange={handleChange}
+          validation={"required|min:6|max:12"}
+        />
+        <InputField
+          ref={inputRefs.current[1]}
+          name="password"
+          label="Password*:"
+          validation="required|min:6"
           onChange={handleChange}
         />
-
-        <InputField
-          ref={inputRef.current[1]}
-          name='password'
-          label='Password:'
-          onChange={handleChange}
-        />
-        <button type="submit">Submit</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );
